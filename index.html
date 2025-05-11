@@ -1,49 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Number Cleaner Tool</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background-image: url('https://i.ibb.co/v67xZS2P/images-1.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
     }
 
-    #login-form {
+    #login-form, #main-content {
       background: rgba(0, 0, 0, 0.6);
-      padding: 40px;
-      margin-top: 80px;
+      padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-      color: #cd0909;
+      color: #fff;
       width: 90%;
-      max-width: 400px;
+      max-width: 420px;
+      margin-top: 40px;
+    }
+
+    #main-content {
+      display: none;
+      background: #91ff91;
+      color: #000;
     }
 
     textarea, input[type="text"], input[type="email"], input[type="password"] {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ff8686;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     button {
       padding: 10px 16px;
-      font-size: 15px;
+      font-size: 16px;
       margin-top: 5px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
     }
 
     .login-btn { background-color: #333; color: white; }
@@ -58,14 +73,14 @@
       border-radius: 5px;
       min-height: 100px;
       white-space: pre-wrap;
-      margin-top: 15px;
       font-size: 14px;
+      color: #000;
     }
 
     .counts {
       margin-top: 10px;
       font-weight: bold;
-      color: #444;
+      color: #000;
     }
 
     .autofill-label {
@@ -74,20 +89,22 @@
       display: block;
     }
 
-    #main-content {
-      display: none;
-      background: #91ff91;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      border-radius: 10px;
+    h2 {
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      textarea, input, button {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
 
 <div id="login-form">
-  <h2>user/pass marco/adm</h2>
+  <h2>Login</h2>
+  <p style="color:#fdd;">User/Pass: marco/admin1234</p>
   <input type="email" id="login-email" placeholder="Enter Email" />
   <input type="password" id="login-password" placeholder="Enter Password" />
   <button class="login-btn" id="login-btn" onclick="checkLogin()" style="display: none;">Login</button>
@@ -98,15 +115,13 @@
   <h2>Mobile Number Cleaner</h2>
 
   <label for="input"><strong>Paste numbers here (one per line):</strong></label>
-  <textarea id="input" placeholder="Enter up to 5000 numbers..."></textarea>
+  <textarea id="input" rows="8" placeholder="Enter up to 5000 numbers..."></textarea>
 
-  <div>
-    <button class="clean-btn" onclick="cleanNumbers()">Clean & Show</button>
-    <button class="copy-btn" onclick="copyOutput()">Copy</button>
-    <button class="clear-btn" onclick="clearAll()">Clear</button>
-  </div>
+  <button class="clean-btn" onclick="cleanNumbers()">Clean & Show</button>
+  <button class="copy-btn" onclick="copyOutput()">Copy</button>
+  <button class="clear-btn" onclick="clearAll()">Clear</button>
 
-  <label class="autofill-label" for="format">Autofill Format (use <code>{{number}}</code> as placeholder):</label>
+  <label class="autofill-label" for="format">Autofill Format (use <code>{{number}}</code>):</label>
   <input type="text" id="format" placeholder="e.g. +91{{number}}, or {{number}}," />
 
   <h3>Cleaned Numbers:</h3>
@@ -121,14 +136,12 @@
 
     if (email === 'marco' && password === 'admin1234') {
       document.getElementById('login-form').style.display = 'none';
-      document.body.style = ''; // remove fullscreen background
       document.getElementById('main-content').style.display = 'block';
     } else {
       document.getElementById('login-error').innerText = "Invalid credentials.";
     }
   }
 
-  // Show login button only when both fields are filled
   document.getElementById('login-email').addEventListener('input', toggleLoginButton);
   document.getElementById('login-password').addEventListener('input', toggleLoginButton);
 
@@ -137,11 +150,7 @@
     const password = document.getElementById('login-password').value.trim();
     const loginBtn = document.getElementById('login-btn');
 
-    if (email && password) {
-      loginBtn.style.display = 'inline-block';
-    } else {
-      loginBtn.style.display = 'none';
-    }
+    loginBtn.style.display = email && password ? 'inline-block' : 'none';
   }
 
   function cleanNumbers() {
