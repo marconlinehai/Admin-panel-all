@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Number Cleaner Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://i.ibb.co/v67xZS2P/images-1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #login-form {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      margin-top: 80px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      color: #cd0909;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    textarea, input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ff8686;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 15px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-btn { background-color: #333; color: white; }
+    .clean-btn { background-color: #00540f; color: white; }
+    .copy-btn { background-color: #2196F3; color: white; }
+    .clear-btn { background-color: #f44336; color: white; }
+
+    .output {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .counts {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    .autofill-label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    #main-content {
+      display: none;
+      background: #91ff91;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="login-form">
+  <h2>user/pass marco/adm</h2>
+  <input type="email" id="login-email" placeholder="Enter Email" />
+  <input type="password" id="login-password" placeholder="Enter Password" />
+  <button class="login-btn" id="login-btn" onclick="checkLogin()" style="display: none;">Login</button>
+  <p id="login-error" style="color: red;"></p>
+</div>
+
+<div id="main-content">
+  <h2>Mobile Number Cleaner</h2>
+
+  <label for="input"><strong>Paste numbers here (one per line):</strong></label>
+  <textarea id="input" placeholder="Enter up to 5000 numbers..."></textarea>
+
+  <div>
+    <button class="clean-btn" onclick="cleanNumbers()">Clean & Show</button>
+    <button class="copy-btn" onclick="copyOutput()">Copy</button>
+    <button class="clear-btn" onclick="clearAll()">Clear</button>
+  </div>
+
+  <label class="autofill-label" for="format">Autofill Format (use <code>{{number}}</code> as placeholder):</label>
+  <input type="text" id="format" placeholder="e.g. +91{{number}}, or {{number}}," />
+
+  <h3>Cleaned Numbers:</h3>
+  <div class="output" id="output"></div>
+  <div class="counts" id="counts"></div>
+</div>
+
+<script>
+  function checkLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (email === 'marco' && password === 'admin1234') {
+      document.getElementById('login-form').style.display = 'none';
+      document.body.style = ''; // remove fullscreen background
+      document.getElementById('main-content').style.display = 'block';
+    } else {
+      document.getElementById('login-error').innerText = "Invalid credentials.";
+    }
+  }
+
+  // Show login button only when both fields are filled
+  document.getElementById('login-email').addEventListener('input', toggleLoginButton);
+  document.getElementById('login-password').addEventListener('input', toggleLoginButton);
+
+  function toggleLoginButton() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value.trim();
+    const loginBtn = document.getElementById('login-btn');
+
+    if (email && password) {
+      loginBtn.style.display = 'inline-block';
+    } else {
+      loginBtn.style.display = 'none';
+    }
+  }
+
+  function cleanNumbers() {
+    const inputText = document.getElementById('input').value;
+    const format = document.getElementById('format').value || "{{number}}";
+    const lines = inputText.split('\n');
+
+    let validNumbers = [];
+    let invalidCount = 0;
+
+    lines.forEach(line => {
+      const cleaned = line.trim();
+
+      if (cleaned === "" || cleaned.toUpperCase() === "NA") {
+        invalidCount++;
+        return;
+      }
+
+      if (!/^\d+$/.test(cleaned)) {
+        invalidCount++;
+        return;
+      }
+
+      if (
+        cleaned.length === 10 &&
+        (
+          cleaned.startsWith("6") ||
+          cleaned.startsWith("7") ||
+          cleaned.startsWith("8") ||
+          cleaned.startsWith("9")
+        )
+      ) {
+        let formatted = format.replace("{{number}}", cleaned);
+        validNumbers.push(formatted);
+      } else {
+        invalidCount++;
+      }
+    });
+
+    document.getElementById('output').innerText = validNumbers.join('\n');
+    document.getElementById('counts').innerText =
+      `✅ Valid: ${validNumbers.length}   ❌ Invalid: ${invalidCount}`;
+  }
+
+  function copyOutput() {
+    const output = document.getElementById('output').innerText;
+    if (!output.trim()) {
+      alert("No cleaned numbers to copy!");
+      return;
+    }
+
+    navigator.clipboard.writeText(output).then(() => {
+      alert("Copied to clipboard!");
+    }, () => {
+      alert("Copy failed. Try manually.");
+    });
+  }
+
+  function clearAll() {
+    document.getElementById('input').value = "";
+    document.getElementById('output').innerText = "";
+    document.getElementById('counts').innerText = "";
+    document.getElementById('format').value = "";
+  }
+</script>
+
+</body>
+</html>
